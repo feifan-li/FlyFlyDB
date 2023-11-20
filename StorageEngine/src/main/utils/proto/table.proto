@@ -1,0 +1,15 @@
+syntax = "proto3";
+option go_package = "/pb";
+message table{
+  repeated record records = 1;
+  int64 partition_id = 2;
+  int64 records_nums_all = 3;
+  int64 records_nums_pending_del = 4;
+  bool sorted = 5;
+}
+message record{
+  bool delete_mark = 6;
+  string partition_key_value = 7;
+  string sort_key_value = 8;
+  repeated string other_fields_values = 9;
+}

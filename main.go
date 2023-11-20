@@ -1,7 +1,12 @@
 package main
 
-import engine_test "FlyFlyDB/StorageEngine/test"
+import (
+	cli "FlyFlyDB/CLI/src/main"
+	"FlyFlyDB/StorageEngine/src/test"
+)
 
 func main() {
-	engine_test.EngineTest()
+	//engine_test.SimpleTest()
+	engine_test.YoutubeTest()
+	cli.StartCLI()
 }
