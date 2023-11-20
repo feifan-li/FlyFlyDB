@@ -13,8 +13,9 @@ import (
 	"strconv"
 )
 
-func SelectFromTable(tName string, filters [][]string,
-	groupBy string, aggField string, aggFunc string, sortBy string) (map[string][]pb2.Record, map[string]string, error) {
+func SelectFromTable(tName string, projection []string, filters [][]string,
+	groupBy string, aggField string, aggFunc string, sortBy string, limit string) (
+	map[string][]pb2.Record, map[string]string, error) {
 
 	if globals.WorkingDatabasePosition == "" {
 		fmt.Printf("Please choose a database\n")
@@ -78,7 +79,7 @@ func SelectFromTable(tName string, filters [][]string,
 		}
 	}
 
-	style.RenderGroupedRecords(meta, groupedRecords, aggField, aggFunc, aggregatedResults)
+	style.RenderGroupedRecords(meta, groupBy, groupedRecords, projection, aggField, aggFunc, aggregatedResults, limit)
 	return groupedRecords, aggregatedResults, nil
 }
 

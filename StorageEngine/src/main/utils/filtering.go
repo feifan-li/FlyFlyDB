@@ -3,6 +3,7 @@ package utils
 import (
 	pb2 "FlyFlyDB/StorageEngine/src/main/utils/pb"
 	"strconv"
+	"strings"
 )
 
 func MatchesFilter(meta *pb2.TableMeta, record *pb2.Record, filters [][]string) bool {
@@ -84,4 +85,31 @@ func applyNumericFilter(fieldValue, operator, value string) bool {
 	}
 
 	return false
+}
+
+func JoinRecordsMatchFilter(t1Name string, meta1 *pb2.TableMeta, r1 *pb2.Record,
+	t2Name string, meta2 *pb2.TableMeta, r2 *pb2.Record, filters [][]string) bool {
+	if len(filters) == 0 {
+		return true
+	}
+	for _, filter := range filters {
+		if strings.HasPrefix(filter[0], t1Name+".") && strings.HasPrefix(filter[2], t2Name+".") {
+			t1FieldName := strings.Split(filter[0], ".")[1]
+			t2FieldName := strings.Split(filter[2], ".")[1]
+			t1FieldValue, success1 := GetFieldValue(meta1, r1, t1FieldName)
+			t2FieldValue, success2 := GetFieldValue(meta2, r2, t2FieldName)
+			if !success1 || !success2 || t1FieldValue != t2FieldValue {
+				return false
+			}
+		} else if strings.HasPrefix(filter[0], t2Name+".") && strings.HasPrefix(filter[2], t1Name+".") {
+			t1FieldName := strings.Split(filter[2], ".")[1]
+			t2FieldName := strings.Split(filter[0], ".")[1]
+			t1FieldValue, success1 := GetFieldValue(meta1, r1, t1FieldName)
+			t2FieldValue, success2 := GetFieldValue(meta2, r2, t2FieldName)
+			if !success1 || !success2 || t1FieldValue != t2FieldValue {
+				return false
+			}
+		}
+	}
+	return true
 }

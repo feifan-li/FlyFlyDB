@@ -34,7 +34,7 @@ func SimpleTest() {
 	dml.InsertIntoTable("person", [][]string{{"id", "7"}, {"name", "Summer"}, {"address", "Spring Field"}, {"age", "24"}})
 	dml.InsertIntoTable("person", [][]string{{"id", "100"}, {"name", "Thomas"}, {"address", "Spring Field"}, {"age", "24"}})
 
-	dml.SelectFromTable("person", [][]string{}, "age", "id", "max", "id")
+	dml.SelectFromTable("person", []string{}, [][]string{}, "age", "id", "max", "id", "")
 }
 
 func YoutubeTest() {
@@ -57,7 +57,11 @@ func YoutubeTest() {
 		{"channel_title", "CaseyNeistat"}, {"category_id", "22"}, {"publish_time", "2017-11-13T17:13:01.000Z"},
 		{"views", "748374"}, {"likes", "57527"}, {"dislikes", "2966"}})
 
-	dml.SelectFromTable("category", [][]string{}, "", "", "", "")
-	dml.SelectFromTable("video", [][]string{}, "", "", "", "")
+	dml.SelectFromTable("category", []string{"country_code,max(id)"}, [][]string{}, "name", "id", "max", "", "")
+	dml.SelectFromTable("video", []string{"country_code", "title", "views"}, [][]string{}, "", "", "", "", "")
+
+}
+
+func YoutubeDemoLoadData() {
 
 }

@@ -12,10 +12,8 @@ import (
 func CreateDatabase(dbName string) string {
 
 	err := os.Mkdir("./DB/"+dbName, 0755)
-
 	if err != nil {
-		fmt.Println(err)
-		return "Failed to create a new database " + dbName
+		return "Failed to create a new database: " + err.Error()
 	} else {
 		return "Created a new database " + dbName
 	}
@@ -24,8 +22,7 @@ func CreateDatabase(dbName string) string {
 func DropDatabase(dbName string) string {
 	err := os.RemoveAll("./DB/" + dbName)
 	if err != nil {
-		fmt.Println(err)
-		return "Failed to drop database " + dbName
+		return "Failed to drop database " + err.Error()
 	} else {
 		return "Dropped a database " + dbName
 	}
@@ -33,7 +30,7 @@ func DropDatabase(dbName string) string {
 
 func SwitchDatabase(dbName string) string {
 	globals.WorkingDatabasePosition = "./DB/" + dbName
-	return dbName
+	return "Switched to database " + dbName
 }
 
 func CreateTable(tName string, partitionKey []string, sortKey []string, otherFields [][]string, partitions string) string {

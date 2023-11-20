@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"FlyFlyDB/Parser/src/main/request"
 	"bufio"
 	"fmt"
 	"os"
@@ -23,12 +24,26 @@ func StartCLI() {
 				os.Exit(0)
 			}
 			if strings.HasSuffix(line, ";") {
+				//pre-processing
+				//remove the suffix ";"
+				line = strings.TrimSuffix(line, ";")
 				lines = append(lines, line)
-				//Render output
-				fmt.Println("ok")
+				req := concatenateLines(lines)
+				req = strings.Trim(req, " ")
+				//send req to Parser, Render output
+				fmt.Println()
+				fmt.Println(request.HandleRequest(req))
 				break
 			}
 			lines = append(lines, line)
 		}
 	}
+}
+
+func concatenateLines(lines []string) string {
+	var res strings.Builder
+	for _, l := range lines {
+		res.WriteString(l)
+	}
+	return res.String()
 }

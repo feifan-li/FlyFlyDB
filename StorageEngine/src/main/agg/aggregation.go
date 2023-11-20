@@ -4,7 +4,9 @@ import (
 	pb2 "FlyFlyDB/StorageEngine/src/main/utils/pb"
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
+	"strings"
 )
 
 type aggFuncType func(meta *pb2.TableMeta, records []pb2.Record, aggField string) (string, error)
@@ -185,4 +187,19 @@ func AvgAggregation(meta *pb2.TableMeta, records []pb2.Record, aggField string) 
 	}
 
 	return strconv.FormatFloat(sum/float64(count), 'f', 2, 64), nil
+}
+
+func IsAggregationField(p string) (aggField string, aggFunc string, isAggField bool) {
+	if strings.HasPrefix(p, "max(") || strings.HasPrefix(p, "MAX(") ||
+		strings.HasPrefix(p, "min(") || strings.HasPrefix(p, "MIN(") ||
+		strings.HasPrefix(p, "avg(") || strings.HasPrefix(p, "AVG(") ||
+		strings.HasPrefix(p, "sum(") || strings.HasPrefix(p, "SUM(") ||
+		strings.HasPrefix(p, "count(") || strings.HasPrefix(p, "COUNT(") {
+		re, _ := regexp.Compile(`(\w+)\((\w+)\)`)
+		matches := re.FindStringSubmatch(p)
+		aggFunc := matches[1]
+		aggField := matches[2]
+		return aggField, aggFunc, true
+	}
+	return "", "", false
 }
