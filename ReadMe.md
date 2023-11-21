@@ -56,7 +56,7 @@
     hot videos(views>500000) from US, group the results by channel and sort by number of views
 
     select:{"table":"video",
-            "projection":["title","views","likes","dislikes"],
+            "projection":["title","channel_title","publish_time","views","likes","dislikes"],
             "filter":["country_code = US","views > 500000"],
             "group_by":"channel_title",
             "sort_by":"views"};

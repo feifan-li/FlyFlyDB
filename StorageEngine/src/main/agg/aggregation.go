@@ -115,9 +115,12 @@ func SumAggregation(meta *pb2.TableMeta, records []pb2.Record, aggField string) 
 
 // CountAggregation is an aggregation function that computes the count of values for a given field.
 func CountAggregation(meta *pb2.TableMeta, records []pb2.Record, aggField string) (string, error) {
-	var count int64
-	count = int64(len(records))
-	return strconv.FormatInt(count, 64), nil
+	count := 0.0
+	for _, _ = range records {
+		count += 1
+	}
+
+	return strconv.FormatFloat(count, 'f', 2, 64), nil
 }
 
 // MinAggregation calculates the minimum value for the specified field.

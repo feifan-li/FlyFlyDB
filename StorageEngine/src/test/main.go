@@ -61,7 +61,3 @@ func YoutubeTest() {
 	dml.SelectFromTable("video", []string{"country_code", "title", "views"}, [][]string{}, "", "", "", "", "")
 
 }
-
-func YoutubeDemoLoadData() {
-
-}
