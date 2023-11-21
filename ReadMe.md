@@ -52,10 +52,9 @@ insert:{"table":"category",
                 "views=119180","likes=9763","dislikes=511"]
             };
 ### select
-    select:{"table":"category",
-            "projection":["*"]};
-    select:{"table":"video",
-            "projection":["*"]};
+    select:{"table":"category","projection":["*"]};
+    
+    select:{"table":"video","projection":["*"]};
 ### update table video
     update:{"table":"video",
             "filter":["country_code = US","id = 2kyS6SvSYSE"],
@@ -76,10 +75,16 @@ insert:{"table":"category",
     use:{"database":"YoutubeDemo"};
     
     //the number of categories per country
-    select:{"table":"category","projection":["country_code","count(id)"],"group_by":"country_code"};
+    select:{"table":"category",
+    		"projection":["country_code","count(id)"],
+    		"group_by":"country_code"
+    };
     
     //the number of trending videos per country
-    select:{"table":"video","projection":["country_code","count(id)"],"group_by":"country_code"};
+    select:{"table":"video",
+    		"projection":["country_code","count(id)"],
+    		"group_by":"country_code"
+    };
     
     //the average number of views of channels in Britain
     select:{"table":"video",
@@ -93,15 +98,19 @@ insert:{"table":"category",
 //videos in US whose views > 1 million but likes< 10k, group the results by channel and then sort by dislikes
 
 select:{"table":"video",
-        "projection":["country_code","title","channel_title",
-        			"publish_time","views","likes","dislikes"],
-        "filter":["country_code = US","views > 1000000","likes < 10000"],
+        "projection":["country_code","title",
+        			"channel_title","publish_time",
+        			"views","likes","dislikes"],
+        "filter":["country_code = US",
+        		"views > 1000000",
+        		"likes < 10000"],
         "group_by":"channel_title",
         "sort_by":"dislikes"
 };
 ```
 ### join:
 ```Fly
+//joining leads to create a temp table, and then select from the temp table
 select:{
     "join":{
     		"tables":["video","category"],

@@ -9,6 +9,15 @@ import (
 )
 
 func StartCLI() {
+	fmt.Println("Welcome")
+	fmt.Printf("        _______      _______\n")
+	fmt.Printf("       / ___/ /     / ___/ /\n")
+	fmt.Printf("      / /__/ /   __/ /__/ /   __\n")
+	fmt.Printf("     / ___/ /\\  / / ___/ /\\  / /\n")
+	fmt.Printf("    / /  / /\\ \\/ / /  / /\\ \\/ /\n")
+	fmt.Printf("   /_/  /___/\\  /_/  /___/\\  /        [Auther: Feifan Li (feifanl AT usc DOT edu)]\n")
+	fmt.Printf("\t     / /\t  / /\n")
+	fmt.Printf("\t    /_/          /_/\n\n")
 	for {
 		scanner := bufio.NewScanner(os.Stdin)
 		var lines []string
