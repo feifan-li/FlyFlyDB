@@ -8,10 +8,11 @@ import (
 	"FlyFlyDB/globals"
 	"fmt"
 	"github.com/google/uuid"
+	"path/filepath"
 	"strconv"
 )
 
-func JoinTwoTables(tables []string, filters [][]string) (string, error) {
+func JoinTwoTables(tables []string, onFilters [][]string, selectFilters [][]string) (string, error) {
 	if globals.WorkingDatabasePosition == "" {
 		fmt.Printf("Please choose a database\n")
 		return "", fmt.Errorf("Please choose a database\n")
@@ -56,7 +57,13 @@ func JoinTwoTables(tables []string, filters [][]string) (string, error) {
 		tempOtherFields = append(tempOtherFields, []string{fieldType, t2Name + "." + meta2.OtherFieldsNames[i]})
 	}
 	ddl.CreateTable(tempName, tempPartitionKey, tempSortKey, tempOtherFields, "2")
-
+	/****get temp table's meta data****/
+	tempMeta := &pb2.TableMeta{}
+	tempTableDir := globals.WorkingDatabasePosition + "/" + tempName
+	err = utils2.ReadProtobufFromBinaryFile(filepath.Join(tempTableDir, tempName+".meta"), tempMeta)
+	if err != nil {
+		return fmt.Sprintf("Failed to read metadata for table %s: %v", tempName, err), err
+	}
 	/****read out records1,records2****/
 	var records1 []pb2.Record
 	var records2 []pb2.Record
@@ -84,7 +91,7 @@ func JoinTwoTables(tables []string, filters [][]string) (string, error) {
 
 	for _, r1 := range records1 {
 		for _, r2 := range records2 {
-			if utils2.JoinRecordsMatchFilter(t1Name, meta1, &r1, t2Name, meta2, &r2, filters) {
+			if utils2.JoinRecordsMatchFilter(t1Name, meta1, &r1, t2Name, meta2, &r2, onFilters) {
 				var fieldAndValues [][]string
 				fieldAndValues = append(fieldAndValues, []string{t1Name + "." + meta1.PartitionKeyName, r1.PartitionKeyValue})
 				fieldAndValues = append(fieldAndValues, []string{t1Name + "." + meta1.SortKeyName, r1.SortKeyValue})
@@ -96,7 +103,31 @@ func JoinTwoTables(tables []string, filters [][]string) (string, error) {
 				for i, otherFieldsName := range meta2.OtherFieldsNames {
 					fieldAndValues = append(fieldAndValues, []string{t2Name + "." + otherFieldsName, r2.OtherFieldsValues[i]})
 				}
-				dml.InsertIntoTable(tempName, fieldAndValues)
+				/****if also Matches With Select Filter****/
+				if len(selectFilters) == 0 {
+					dml.InsertIntoTable(tempName, fieldAndValues)
+				}
+				for _, filter := range selectFilters {
+					if len(filter) != 3 {
+						break
+					}
+					fieldName, operator, value := filter[0], filter[1], filter[2]
+					valid := false
+					var fieldValue string
+					//fieldName should appear in fieldAndValues
+					for _, fieldAndValue := range fieldAndValues {
+						if fieldName == fieldAndValue[0] {
+							fieldValue = fieldAndValue[1]
+							valid = true
+							break
+						}
+					}
+					if !valid || !utils2.ApplyFilter(fieldValue, operator, value) {
+						break
+					} else {
+						dml.InsertIntoTable(tempName, fieldAndValues)
+					}
+				}
 			}
 		}
 	}

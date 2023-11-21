@@ -27,7 +27,7 @@ func MatchesFilter(meta *pb2.TableMeta, record *pb2.Record, filters [][]string) 
 		}
 
 		// Apply the filter based on the operator
-		if !applyFilter(fieldValue, operator, value) {
+		if !ApplyFilter(fieldValue, operator, value) {
 			return false
 		}
 	}
@@ -50,7 +50,7 @@ func GetFieldValue(meta *pb2.TableMeta, record *pb2.Record, fieldName string) (s
 	return "", false // Field not found
 }
 
-func applyFilter(fieldValue, operator, value string) bool {
+func ApplyFilter(fieldValue, operator, value string) bool {
 	switch operator {
 	case "=", "is":
 		return fieldValue == value

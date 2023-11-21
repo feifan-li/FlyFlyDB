@@ -122,7 +122,7 @@ func HandleRequest(reqStr string) string {
 				HandleSelectTableRequest(selectTableReq)
 				return ""
 			} else if selectTableReq.Join != nil && selectTableReq.Table == "" {
-				tempName, err := HandleJoinTableRequest(*selectTableReq.Join)
+				tempName, err := HandleJoinTableRequest(selectTableReq)
 				if err != nil {
 					return err.Error()
 				}
@@ -233,12 +233,16 @@ func HandleSelectTableRequest(req SelectTableReq) {
 		}
 	}
 }
-func HandleJoinTableRequest(req JoinReq) (string, error) {
+func HandleJoinTableRequest(req SelectTableReq) (string, error) {
 	var joinFilters [][]string
-	for _, filter := range req.On {
+	for _, filter := range req.Join.On {
 		joinFilters = append(joinFilters, strings.Fields(filter))
 	}
-	tempName, err := join.JoinTwoTables(req.Tables, joinFilters)
+	var filters [][]string
+	for _, str := range req.Filter {
+		filters = append(filters, strings.Fields(str))
+	}
+	tempName, err := join.JoinTwoTables(req.Join.Tables, joinFilters, filters)
 	if err != nil {
 		return "", fmt.Errorf("Failed when joining two tables " + err.Error())
 	}
