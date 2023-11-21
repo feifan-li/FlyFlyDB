@@ -8,25 +8,29 @@ create:{"database":"youtube"};
 use:{"database":"youtube"};
 ```
 ### create tables:
-    create:{"table":"category",
-            "partition_key":"string country_code",
-            "sort_key":"int32 id",
-            "fields":["string name"],
-            "partitions":"2"};
-    
-    create:{"table":"video",
-            "partition_key":"string country_code",
-            "sort_key":"string id",
-            "fields":["string title","string channel_title",
-                "int32 category_id","string publish_time",
-                "int64 views","int64 likes","int64 dislikes"],
-            "partitions":"2"};
+```Fly
+create:{"table":"category",
+        "partition_key":"string country_code",
+        "sort_key":"int32 id",
+        "fields":["string name"],
+        "partitions":"2"};
+
+create:{"table":"video",
+        "partition_key":"string country_code",
+        "sort_key":"string id",
+        "fields":["string title","string channel_title",
+            "int32 category_id","string publish_time",
+            "int64 views","int64 likes","int64 dislikes"],
+        "partitions":"2"};
+```
 ### insert into category
-    insert:{"table":"category",
-            "values":["country_code=US","id=1","name=Film & Animation"]};
-    
-    insert:{"table":"category",
-            "values":["country_code=US","id=15","name=Pets & Animals"]};
+```Fly
+insert:{"table":"category",
+        "values":["country_code=US","id=1","name=Film & Animation"]};
+
+insert:{"table":"category",
+        "values":["country_code=US","id=15","name=Pets & Animals"]};
+```
 ### insert into video
     insert:{"table":"video",
             "values":["country_code=US",
@@ -81,28 +85,35 @@ use:{"database":"youtube"};
     select:{"table":"video",
             "projection":["channel_title","avg(likes)"],
             "filter":["country_code = GB"],
-            "group_by":"channel_title"};
-### group by, sorting:
-    //(Analyze the ratio of likes)
-    //videos in US whose views > 1 million but likes< 10k, group the results by channel and then sort by dislikes
-    
-    select:{"table":"video",
-            "projection":["country_code","title","channel_title","publish_time","views","likes","dislikes"],
-            "filter":["country_code = US","views > 1000000","likes < 10000"],
-            "group_by":"channel_title",
-            "sort_by":"dislikes"};
-### join:
-    select:{
-        "join":{
-        		"tables":["video","category"],
-        		"on":["video.country_code = category.country_code",
-        			"video.category_id = category.id"]
-        },
-        "projection":["video.country_code","video.title",
-        			"video.likes","category.name"],
-        "filter":["video.likes > 1000000"],
-        "group_by":"video.country_code",
-        "sort_by":"",
-        "limit":""
+            "group_by":"channel_title"
     };
+### group by, sorting:
+```Fly
+//(Analyze the ratio of likes)
+//videos in US whose views > 1 million but likes< 10k, group the results by channel and then sort by dislikes
+
+select:{"table":"video",
+        "projection":["country_code","title","channel_title",
+        			"publish_time","views","likes","dislikes"],
+        "filter":["country_code = US","views > 1000000","likes < 10000"],
+        "group_by":"channel_title",
+        "sort_by":"dislikes"
+};
+```
+### join:
+```Fly
+select:{
+    "join":{
+    		"tables":["video","category"],
+    		"on":["video.country_code = category.country_code",
+    			"video.category_id = category.id"]
+    },
+    "projection":["video.country_code","video.title",
+    			"video.likes","category.name"],
+    "filter":["video.likes > 1000000"],
+    "group_by":"video.country_code",
+    "sort_by":"",
+    "limit":""
+};
+```
 
