@@ -1,8 +1,6 @@
 package main
 
-import (
-	cli "FlyFlyDB/CLI/src/main"
-)
+import cli "FlyFlyDB/CLI/src/main"
 
 func main() {
 	//engine_test.SimpleTest()

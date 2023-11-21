@@ -51,32 +51,6 @@
     update:{"table":"video","filter":["country_code = US","id = 2kyS6SvSYSE"],"fields":["views","likes"],"values":["748375","57528"]};
 ### delete records
     delete:{"table":"category","filter":["country_code = US","id >= 10"]};
-
-### filtering and group by:
-    hot videos(views>500000) from US, group the results by channel and sort by number of views
-
-    select:{"table":"video",
-            "projection":["title","channel_title","publish_time","views","likes","dislikes"],
-            "filter":["country_code = US","views > 500000"],
-            "group_by":"channel_title",
-            "sort_by":"views"};
-### aggregation: 
-    the average number of views of channels in Canada
-
-    select:{"table":"video",
-            "projection":["channel_title","avg(likes)"],
-            "filter":["country_code = US"],
-            "group_by":"channel_title"};
-### join:
-
-    select:{
-        "join":{"tables":["video","category"],"on":["video.country_code = category.country_code","video.category_id = category.id"]},
-        "projection":["video.country_code","video.title","category.id","category.name"],
-        "filter":[],
-        "group_by":"video.country_code",
-        "sort_by":"likes",
-        "limit":"1"
-    };
 ### truncate a table:
     clear:{"table":"category"};
     clear:{"table":"video"};
@@ -85,4 +59,35 @@
     drop:{"table":"video"};
 ### drop a database:
     drop:{"database":"youtube"};
+
+### aggregation,filtering:
+    //switch to a database already loaded with data
+    use:{"database":"YoutubeDemo"};
+    //the number of categories per country
+    select:{"table":"category","projection":["country_code","count(id)"],"group_by":"country_code"};
+    //the number of trending videos per country
+    select:{"table":"video","projection":["country_code","count(id)"],"group_by":"country_code"};
+    //the average number of views of channels in Britain
+    select:{"table":"video",
+            "projection":["channel_title","avg(likes)"],
+            "filter":["country_code = GB"],
+            "group_by":"channel_title"};
+### group by, sorting:
+    //(Analyze the ratio of likes)
+    //videos in US whose views > 1 million but likes< 10k, group the results by channel and then sort by dislikes
+
+    select:{"table":"video",
+            "projection":["country_code","title","channel_title","publish_time","views","likes","dislikes"],
+            "filter":["country_code = US","views > 1000000","likes < 10000"],
+            "group_by":"channel_title",
+            "sort_by":"dislikes"};
+### join:
+    select:{
+        "join":{"tables":["video","category"],"on":["video.country_code = category.country_code","video.category_id = category.id"]},
+        "projection":["video.country_code","video.title","category.id","category.name"],
+        "filter":[],
+        "group_by":"video.country_code",
+        "sort_by":"likes",
+        "limit":"1"
+    };
 
