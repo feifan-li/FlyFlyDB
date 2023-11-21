@@ -24,7 +24,7 @@ use:{"database":"youtube"};
 ### insert into category
     insert:{"table":"category",
             "values":["country_code=US","id=1","name=Film & Animation"]};
-
+    
     insert:{"table":"category",
             "values":["country_code=US","id=15","name=Pets & Animals"]};
 ### insert into video
@@ -37,7 +37,7 @@ use:{"database":"youtube"};
                 "publish_time=2017-11-13T17:13:01.000Z",
                 "views=748374","likes=57527","dislikes=2966"]
             };
-
+    
     insert:{"table":"video",
             "values":["country_code=US",
                 "id=gHZ1Qz0KiKM",
@@ -70,13 +70,13 @@ use:{"database":"youtube"};
 ### aggregation,filtering,projection:
     //switch to a database already loaded with data
     use:{"database":"YoutubeDemo"};
-
+    
     //the number of categories per country
     select:{"table":"category","projection":["country_code","count(id)"],"group_by":"country_code"};
-
+    
     //the number of trending videos per country
     select:{"table":"video","projection":["country_code","count(id)"],"group_by":"country_code"};
-
+    
     //the average number of views of channels in Britain
     select:{"table":"video",
             "projection":["channel_title","avg(likes)"],
@@ -93,8 +93,13 @@ use:{"database":"youtube"};
             "sort_by":"dislikes"};
 ### join:
     select:{
-        "join":{"tables":["video","category"],"on":["video.country_code = category.country_code","video.category_id = category.id"]},
-        "projection":["video.country_code","video.title","video.likes","category.name"],
+        "join":{
+        		"tables":["video","category"],
+        		"on":["video.country_code = category.country_code",
+        			"video.category_id = category.id"]
+        },
+        "projection":["video.country_code","video.title",
+        			"video.likes","category.name"],
         "filter":["video.likes > 1000000"],
         "group_by":"video.country_code",
         "sort_by":"",
