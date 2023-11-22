@@ -64,9 +64,9 @@ func JoinTwoTables(tables []string, onFilters [][]string, selectFilters [][]stri
 	if err != nil {
 		return fmt.Sprintf("Failed to read metadata for table %s: %v", tempName, err), err
 	}
-	/****read out records1,records2****/
-	var records1 []pb2.Record
-	var records2 []pb2.Record
+
+	var partitions1 []pb2.Record
+	var partitions2 []pb2.Record
 	var pid int64
 	for pid = 1; pid <= meta1.Partitions; pid++ {
 		table1 := &pb2.Table{}
@@ -75,7 +75,7 @@ func JoinTwoTables(tables []string, onFilters [][]string, selectFilters [][]stri
 			return tempName, fmt.Errorf("Failed to read data for table %s, partition %d: %v\n", t1Name, pid, err)
 		}
 		for _, record := range table1.Records {
-			records1 = append(records1, *record)
+			partitions1 = append(partitions1, *record)
 		}
 	}
 	for pid = 1; pid <= meta2.Partitions; pid++ {
@@ -85,12 +85,12 @@ func JoinTwoTables(tables []string, onFilters [][]string, selectFilters [][]stri
 			return tempName, fmt.Errorf("Failed to read data for table %s, partition %d: %v\n", t2Name, pid, err)
 		}
 		for _, record := range table2.Records {
-			records2 = append(records2, *record)
+			partitions2 = append(partitions2, *record)
 		}
 	}
-
-	for _, r1 := range records1 {
-		for _, r2 := range records2 {
+	/**** Nested-Loop Join ****/
+	for _, r1 := range partitions1 {
+		for _, r2 := range partitions2 {
 			if utils2.JoinRecordsMatchFilter(t1Name, meta1, &r1, t2Name, meta2, &r2, onFilters) {
 				var fieldAndValues [][]string
 				fieldAndValues = append(fieldAndValues, []string{t1Name + "." + meta1.PartitionKeyName, r1.PartitionKeyValue})

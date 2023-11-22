@@ -86,7 +86,7 @@ insert:{"table":"category",
     		"group_by":"country_code"
     };
     
-    //the average number of views of channels in Britain
+    //the avg(views) of each channel in Britain
     select:{"table":"video",
             "projection":["channel_title","avg(likes)"],
             "filter":["country_code = GB"],
