@@ -74,19 +74,19 @@ insert:{"table":"category",
     //switch to a database already loaded with data
     use:{"database":"YoutubeDemo"};
     
-    //the number of categories per country
+    //aggregation: the number of categories per country
     select:{"table":"category",
     		"projection":["country_code","count(id)"],
     		"group_by":"country_code"
     };
     
-    //the number of trending videos per country
+    //aggregation: the number of trending videos per country
     select:{"table":"video",
     		"projection":["country_code","count(id)"],
     		"group_by":"country_code"
     };
     
-    //the avg(views) of each channel in Britain
+    //aggregation: the avg(views) of each channel in Britain
     select:{"table":"video",
             "projection":["channel_title","avg(likes)"],
             "filter":["country_code = GB"],
