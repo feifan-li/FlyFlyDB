@@ -1,4 +1,6 @@
 # Group 25 Project - The Nosql Database: FlyFlyDB
+## The file structure:
+The DB/ directory is where all the databases, tables and records will be actually stored. The CLI, parser and storage engine are implemented under different directories. Further categorizations of functions are embodied in different sub-directories. The globals/ directory contain global information. The "main.go" is the entry point for building and executing the FlyFlyDB.
 ## The Easiest Approach to Launch this Database:
 ### just execute the "main.exe" file if you don't have Golang environment, but note that downloading the entire project is still required:
 ```
