@@ -1,6 +1,6 @@
 # Group 25 Project - The Nosql Database: FlyFlyDB
 ## The Easiest Approach to Launch this Database:
-### just execute the "main.exe" file if you don't have Golang environment:
+### just execute the "main.exe" file if you don't have Golang environment, but note that downloading the entire project is still required:
 ```
 ./main.exe
 ```
@@ -111,7 +111,7 @@ drop:{"database":"youtube"};
 ```
 
 ### aggregation,filtering,projection:
-switch to a database already loaded with data
+switch to the database already loaded with data
 ```Fly
 use:{"database":"YoutubeDemo"};
 ```
